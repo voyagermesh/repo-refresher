@@ -1,0 +1,4 @@
+github.com/voyagermesh/apimachinery
+github.com/voyagermesh/installer
+github.com/voyagermesh/voyagermesh
+github.com/voyagermesh/operator
