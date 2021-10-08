@@ -6,7 +6,7 @@ SCRIPT_NAME=$(basename "${BASH_SOURCE[0]}")
 
 GITHUB_USER=${GITHUB_USER:-1gtm}
 PR_BRANCH=voyagermesh-repo-refresher # -$(date +%s)
-COMMIT_MSG="Update dependencies to publish SiteInfo"
+COMMIT_MSG="Use nats.go v1.13.0"
 
 REPO_ROOT=/tmp/voyagermesh-repo-refresher
 
@@ -45,7 +45,7 @@ refresh() {
             -require=kmodules.xyz/objectstore-api@fdf68f88ea6e6b92a3c31339128b3551e2bc9742 \
             -require=go.bytebuilders.dev/license-verifier@v0.9.3 \
             -require=go.bytebuilders.dev/license-verifier/kubernetes@v0.9.3 \
-            -require=go.bytebuilders.dev/audit@v0.0.9 \
+            -require=go.bytebuilders.dev/audit@v0.0.10 \
             -require=gomodules.xyz/x@v0.0.8 \
             -replace=github.com/satori/go.uuid=github.com/gofrs/uuid@v4.0.0+incompatible \
             -replace=github.com/dgrijalva/jwt-go=github.com/golang-jwt/jwt@v3.2.1+incompatible \
