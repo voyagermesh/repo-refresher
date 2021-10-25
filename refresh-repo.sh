@@ -6,7 +6,7 @@ SCRIPT_NAME=$(basename "${BASH_SOURCE[0]}")
 
 GITHUB_USER=${GITHUB_USER:-1gtm}
 PR_BRANCH=voyagermesh-repo-refresher # -$(date +%s)
-COMMIT_MSG="Fix jwt-go security vulnerability"
+COMMIT_MSG="Fix satori/go.uuid security vulnerability"
 
 REPO_ROOT=/tmp/voyagermesh-repo-refresher
 
@@ -37,17 +37,17 @@ refresh() {
             go mod tidy
         fi
         go mod edit \
-            -require=kmodules.xyz/client-go@8df5bb467db6110ee099d34621d435b9d1953ebe \
+            -require=kmodules.xyz/client-go@88313b8deed7b2b07e63bec590f2e41592905909 \
             -require=kmodules.xyz/monitoring-agent-api@38ca075a2dbde85cf48d84b699720925066a5f3a \
             -require=kmodules.xyz/webhook-runtime@7f73c2ab318a43feb61f11696815d2abdc745af1 \
-            -require=kmodules.xyz/resource-metadata@v0.6.4 \
+            -require=kmodules.xyz/resource-metadata@v0.6.7 \
             -require=kmodules.xyz/custom-resources@72bd9e8cae6e8ca708e6e716bef12a2f58f60b96 \
             -require=kmodules.xyz/objectstore-api@fdf68f88ea6e6b92a3c31339128b3551e2bc9742 \
             -require=go.bytebuilders.dev/license-verifier@v0.9.3 \
             -require=go.bytebuilders.dev/license-verifier/kubernetes@v0.9.3 \
             -require=go.bytebuilders.dev/audit@v0.0.10 \
             -require=gomodules.xyz/x@v0.0.8 \
-            -replace=github.com/satori/go.uuid=github.com/gofrs/uuid@v4.0.0+incompatible \
+            -replace=github.com/satori/go.uuid=github.com/gomodules/uuid@v4.0.0+incompatible \
             -replace=github.com/dgrijalva/jwt-go=github.com/gomodules/jwt@v3.2.2+incompatible \
             -replace=github.com/golang-jwt/jwt=github.com/golang-jwt/jwt@v3.2.2+incompatible \
             -replace=github.com/form3tech-oss/jwt-go=github.com/form3tech-oss/jwt-go@v3.2.5+incompatible \
