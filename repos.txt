@@ -1,4 +1,4 @@
-github.com/voyagermesh/apimachinery
-github.com/voyagermesh/haproxy-ingress
-github.com/voyagermesh/installer
-github.com/voyagermesh/voyagermesh
+voyagermesh/apimachinery
+voyagermesh/haproxy-ingress
+voyagermesh/installer
+voyagermesh/voyagermesh
