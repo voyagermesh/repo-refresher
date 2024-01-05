@@ -5,12 +5,12 @@ SCRIPT_ROOT=$(realpath $(dirname "${BASH_SOURCE[0]}"))
 SCRIPT_NAME=$(basename "${BASH_SOURCE[0]}")
 
 GITHUB_USER=${GITHUB_USER:-1gtm}
-PR_BRANCH=kdbdeps # -$(date +%s)
-COMMIT_MSG="Update license verifier"
+PR_BRANCH=k129-auto # -$(date +%s)
+COMMIT_MSG="Use k8s 1.29 client libs"
 
-REPO_ROOT=/tmp/licup2
+REPO_ROOT=/tmp/kubedb-repo-refresher
 
-KUBEDB_API_REF=${KUBEDB_API_REF:-7263b50309d2e37f83f763f0448a4faeac1d5687}
+API_REF=${API_REF:-a1d475ceb73e12977cce84eb7564393b9ae9b6e3}
 
 repo_uptodate() {
     # gomodfiles=(go.mod go.sum vendor/modules.txt)
@@ -32,17 +32,47 @@ refresh() {
     cd $name
     git checkout -b $PR_BRANCH
 
+    sed -i 's/?=\ 1.20/?=\ 1.21/g' Makefile
+    sed -i 's|appscode/gengo:release-1.25|appscode/gengo:release-1.29|g' Makefile
+    sed -i 's/goconst,//g' Makefile
+    sed -i 's|gcr.io/distroless/static-debian11|gcr.io/distroless/static-debian12|g' Makefile
+    sed -i 's|debian:bullseye|debian:bookworm|g' Makefile
+
+    pushd .github/workflows/ && {
+        # update GO
+        sed -i 's/Go\ 1.20/Go\ 1.21/g' *
+        sed -i 's/go-version:\ ^1.20/go-version:\ ^1.21/g' *
+        sed -i 's/go-version:\ 1.20/go-version:\ 1.21/g' *
+        sed -i "s/go-version:\ '1.20'/go-version:\ '1.21'/g" *
+        popd
+    }
+
     if [ -f go.mod ]; then
+        cat <<EOF > go.mod
+module voyagermesh.dev/$name
+
+EOF
         go mod edit \
-            -require=github.com/docker/distribution@v2.8.2+incompatible \
-            -require=kmodules.xyz/client-go@v0.25.23 \
+            -require=kubedb.dev/apimachinery@${API_REF} \
+            -require=kubedb.dev/db-client-go@v0.0.8 \
+            -require=kubestash.dev/apimachinery@cc46ddfd674a760d87ec2fe4122f7816296654c8 \
+            -require=gomodules.xyz/logs@v0.0.7 \
+            -require=kmodules.xyz/client-go@v0.29.4 \
+            -require=kmodules.xyz/resource-metadata@v0.18.1 \
+            -require=kmodules.xyz/go-containerregistry@v0.0.12 \
             -require=gomodules.xyz/password-generator@v0.2.9 \
-            -require=go.bytebuilders.dev/license-verifier@v0.13.2 \
-            -require=go.bytebuilders.dev/license-verifier/kubernetes@v0.13.2 \
-            -require=go.bytebuilders.dev/audit@v0.0.27 \
-            -require=stash.appscode.dev/apimachinery@v0.30.0 \
-            -require=github.com/redis/go-redis/v9@v9.0.5 \
-            -require=github.com/elastic/go-elasticsearch/v7@v7.15.1
+            -require=go.bytebuilders.dev/license-verifier@v0.13.4 \
+            -require=go.bytebuilders.dev/license-verifier/kubernetes@v0.13.4 \
+            -require=go.bytebuilders.dev/license-proxyserver@31122ab825027d2495c9320b63d99660f1ca56be \
+            -require=go.bytebuilders.dev/audit@3ff33160c6f02f6151e59cdd44dd50a347c02ba0 \
+            -require=github.com/cert-manager/cert-manager@v1.13.3 \
+            -require=github.com/elastic/go-elasticsearch/v7@v7.15.1 \
+            -require=go.mongodb.org/mongo-driver@v1.10.2 \
+            -replace=github.com/Masterminds/sprig/v3=github.com/gomodules/sprig/v3@v3.2.3-0.20220405051441-0a8a99bac1b8 \
+            -replace=sigs.k8s.io/controller-runtime=github.com/kmodules/controller-runtime@ac-0.17.0 \
+            -replace=github.com/imdario/mergo=github.com/imdario/mergo@v0.3.6 \
+            -replace=k8s.io/apiserver=github.com/kmodules/apiserver@ac-1.29.0 \
+            -replace=k8s.io/kubernetes=github.com/kmodules/kubernetes@ac-1.29.0
 
         # sed -i 's|NewLicenseEnforcer|MustLicenseEnforcer|g' `grep 'NewLicenseEnforcer' -rl *`
         go mod tidy
@@ -66,7 +96,6 @@ refresh() {
         fi
         git push -u origin HEAD -f
         hub pull-request \
-            --labels automerge \
             --message "$COMMIT_MSG" \
             --message "Signed-off-by: $(git config --get user.name) <$(git config --get user.email)>" || true
         # gh pr create \
