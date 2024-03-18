@@ -1,4 +1,6 @@
 voyagermesh/apimachinery
+voyagermesh/cli
 voyagermesh/haproxy-ingress
 voyagermesh/installer
-voyagermesh/voyagermesh
+voyagermesh/voyager
+voyagermesh/website
