@@ -55,6 +55,6 @@ jobs:
 
       - name: Refresh repositories
         env:
-          GITHUB_TOKEN: ${{ secrets.LGTM_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ./refresh-repo.sh repos.txt
