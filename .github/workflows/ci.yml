@@ -48,11 +48,6 @@ jobs:
           git config --global user.name "1gtm"
           git config --global user.email "1gtm@appscode.com"
 
-      - name: Install GitHub CLI
-        run: |
-          curl -fsSL https://github.com/github/hub/raw/master/script/get | bash -s 2.14.1
-          sudo mv bin/hub /usr/local/bin
-
       - name: Refresh repositories
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
